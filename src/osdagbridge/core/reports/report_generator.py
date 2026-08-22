@@ -429,6 +429,8 @@ class ReportFigures:
     defl_ll:         Optional[str] = None
     shear_connector: Optional[str] = None
     cross_bracing:   Optional[str] = None
+    ur_bar_chart:    Optional[str] = None
+    material_summary: Optional[str] = None
 
 @dataclass
 class ReportPayload:
@@ -898,6 +900,20 @@ def generate_report(payload, request):
             # Compute and inject quantities for Chapter 7
             quantities = calculate_material_quantities(payload.inputs, payload.output_dict)
             payload.inputs.update(quantities)
+
+            # Generate UR and Material Bar Charts
+            try:
+                from osdagbridge.core.reports.plots import generate_ur_plot, generate_material_plots
+                ur_path = generate_ur_plot(payload.output_dict, tmp_assets)
+                mat_path = generate_material_plots(payload.inputs, tmp_assets)
+                payload.figures.ur_bar_chart = ur_path.replace('\\', '/')
+                payload.figures.material_summary = mat_path.replace('\\', '/')
+            except Exception as e:
+                logger.error(f"Error generating matplotlib charts: {e}")
+
+            # Pass the material chart path to input_dict for chap7 to consume
+            if payload.figures.material_summary:
+                payload.inputs['_material_summary_fig'] = payload.figures.material_summary
 
             # ── Assemble LaTeX document (fig_paths now has tmp_dir paths) ──
             bridge = ReportDataBridge(payload.output_dict, payload.inputs, payload)

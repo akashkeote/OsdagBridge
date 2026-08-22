@@ -115,6 +115,24 @@ A grillage model was used for structural analysis. The deck is idealized as a gr
 & \makecell{\textbf{Right }}\\
 \hline
 \endfirsthead
+\hline
+\multirow{2}{*}{\makecell{\textbf{Load}\\\textbf{Case/}\\\textbf{Comb.}}}
+& \multicolumn{3}{c|}{\textbf{Bending Moment}}
+& \multicolumn{3}{c|}{\textbf{Shear Force}}
+& \multicolumn{2}{c|}{\textbf{Reaction at Supports}}\\
+\cline{2-9}
+
+& \makecell{\textbf{Max}\\\textbf{(kNm)}}
+& \textbf{Girder}
+& \makecell{\textbf{Loc.}\\\textbf{(m)}}
+& \makecell{\textbf{Max}\\\textbf{(kN)}}
+& \textbf{Girder}
+& \makecell{\textbf{Loc.}\\\textbf{(m)}}
+& \makecell{\textbf{Left}}
+& \makecell{\textbf{Right }}\\
+\hline
+\endhead
+\endfirsthead
 
 \hline
 \multirow{2}{*}{\makecell{\textbf{Load}\\\textbf{Case/}\\\textbf{Comb.}}}
@@ -146,6 +164,11 @@ A grillage model was used for structural analysis. The deck is idealized as a gr
 \hline
 \textbf{Load Case} & \textbf{Left Support (kN)} & \textbf{Right Support (kN)} \\[6pt]
 \hline
+\endfirsthead
+\hline
+\textbf{Load Case} & \textbf{Left Support (kN)} & \textbf{Right Support (kN)} \\[6pt]
+\hline
+\endhead
  & """ + '' + r""" & """ + '' + r""" \\[6pt]
 \hline
  & """ + '' + r""" & """ + '' + r""" \\[6pt]
@@ -160,6 +183,11 @@ A grillage model was used for structural analysis. The deck is idealized as a gr
 \hline
 \textbf{parameter} & \textbf{value} \\
 \hline
+\endfirsthead
+\hline
+\textbf{parameter} & \textbf{value} \\
+\hline
+\endhead
 \textnormal{Deflection due to Live Load, $\delta_{LL}$} & """ + _live_str + r""" \\[6pt]
 \hline
 \textnormal{Allowable Live Load Deflection ($\Delta_{allow}$)} & """ + _allow_live_str + r""" \\[6pt]
