@@ -1011,7 +1011,7 @@ class PlateGirderBridge:
             n_t=n_t,
             edge_dist=deck_overhang,
             ext_to_int_dist=float(inp[KEY_TS_GIRDER_SPACING]),
-            angle=self._to_float(KEY_SKEW_ANGLE, 0.0),
+            angle=float(self.input_dict.get(KEY_SKEW_ANGLE, 0.0)),
         )
 
         self.deck_layout = DeckLayoutProperties(
