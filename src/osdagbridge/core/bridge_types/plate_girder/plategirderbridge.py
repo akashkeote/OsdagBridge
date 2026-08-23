@@ -2306,7 +2306,7 @@ class PlateGirderBridge:
         # Write every output into output_dict while it is still mutable.
         # store_design_results also sets the KEY_UTIL_* values so the block
         # below is redundant — but kept for the _frontend.set_output_value calls.
-        self.store_design_results(design_results)
+        # self.store_design_results(design_results)
 
     def _design_cross_bracing_members(self) -> dict:
         """
