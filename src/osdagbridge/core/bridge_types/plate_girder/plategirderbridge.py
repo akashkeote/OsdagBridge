@@ -2344,7 +2344,7 @@ class PlateGirderBridge:
         self.output_dict["crossbracing_forces_dict"] = forces_dict
 
         enrich_crossbracing_dump(pair_designs)
-        self._print_crossbracing_design_results(forces_dict, pair_designs)
+        # self._print_crossbracing_design_results(forces_dict, pair_designs)
 
         # Resolve all possible intermediate girder pairs
         n_girders = int(self.input_dict[KEY_TS_NO_OF_GIRDERS])
