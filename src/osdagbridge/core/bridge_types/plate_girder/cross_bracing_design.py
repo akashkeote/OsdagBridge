@@ -557,16 +557,15 @@ class CrossBracingDesign:
             "cb_spacing_m":      round(self.cb_spacing, 3),
             "depth_ratio":       self.depth_ratio,
         }
-
     def get_crossbracing_count(self) -> int:
         """Return the number of cross-bracing panels in result_data."""
         return len(self.bridge.result_data.get("crossbracings", []))
 
-    def run_member_designs(self, forces_dict: dict, dev: bool = False) -> dict:
+    def run_member_designs(self, forces_dict: dict, dev: bool = False, conn_key_override: str = None) -> dict:
         """
         Run Osdag member designs for diagonals and chords.
 
-        Tension and compression are designed separately â€” a member that sees both
+        Tension and compression are designed separately — a member that sees both
         must satisfy both checks independently. Section selection is left to the user
         since sections cannot be compared programmatically.
 
@@ -576,6 +575,8 @@ class CrossBracingDesign:
             Output of get_design_forces_dict().
         dev : bool
             If True, dump forces_dict as JSON to tools/crossbracing_forces_dict.json.
+        conn_key_override: str
+            If provided, uses this base key for connection type instead of KEY_MP_CB_BRACING_CONNECTION.
 
         Returns
         -------
@@ -615,7 +616,8 @@ class CrossBracingDesign:
 
         for pair, vals in forces_dict["pairs"].items():
             pair_id = pair.replace('-', '')
-            conn_type = self.bridge.input_dict.get(f"{KEY_MP_CB_BRACING_CONNECTION}.{pair_id}", "Bolted")
+            base_key = conn_key_override if conn_key_override else KEY_MP_CB_BRACING_CONNECTION
+            conn_type = self.bridge.input_dict.get(f"{base_key}.{pair_id}", "Bolted")
             for member, L_mm, t_key, c_key in (
                 ("diagonal", L_diag_mm, "diag_tension_kN",  "diag_compression_kN"),
                 ("chord",    L_chord_mm, "chord_tension_kN", "chord_compression_kN"),

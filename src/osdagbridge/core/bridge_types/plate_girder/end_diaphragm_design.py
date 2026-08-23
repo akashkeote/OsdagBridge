@@ -160,7 +160,8 @@ class EndDiaphragmDesign:
             if "diag_tension_kN" in d:
                 cb_forces_for_design["pairs"][p] = d
 
-        cb_designs = self.cb_design.run_member_designs(cb_forces_for_design)
+        from osdagbridge.core.utils.common import KEY_MP_ED_BRACING_CONNECTION
+        cb_designs = self.cb_design.run_member_designs(cb_forces_for_design, conn_key_override=KEY_MP_ED_BRACING_CONNECTION)
         
         for p, designs in cb_designs.items():
             if p in pair_designs:
