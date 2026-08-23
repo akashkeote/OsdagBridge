@@ -2427,9 +2427,9 @@ class PlateGirderBridge:
             # Query database and populate diagonal section properties
             if diag_des:
                 self.output_dict[make_pair_key(KEY_MP_CB_BRACING_SECTION_TYPE, pair_id)] = diag_des
-                # diag_details = self._query_crossbracing_section(diag_des)
-                # if diag_details:
-                    # self.output_dict[make_pair_key("member_properties.cross_bracing_details.diagonal.section_type", pair_id)] = diag_details["type"]
+                diag_details = self._query_crossbracing_section(diag_des)
+                if diag_details:
+                    self.output_dict[make_pair_key("member_properties.cross_bracing_details.diagonal.section_type", pair_id)] = diag_details["type"]
                     
                     # Set diagonal dimensions
                     leg_h_key = make_pair_key("member_properties.cross_bracing_details.diagonal.leg_h", pair_id)
@@ -2464,10 +2464,10 @@ class PlateGirderBridge:
             if chord_des:
                 self.output_dict[make_pair_key(KEY_MP_CB_TOP_CHORD_SECTION_DESIG, pair_id)] = chord_des
                 self.output_dict[make_pair_key(KEY_MP_CB_BOTTOM_CHORD_SECTION_DESIG, pair_id)] = chord_des
-                # chord_details = self._query_crossbracing_section(chord_des)
-                # if chord_details:
+                chord_details = self._query_crossbracing_section(chord_des)
+                if chord_details:
                     if top_chord_enabled:
-                        # self.output_dict[make_pair_key("member_properties.cross_bracing_details.top_chord.section_type", pair_id)] = chord_details["type"]
+                        self.output_dict[make_pair_key("member_properties.cross_bracing_details.top_chord.section_type", pair_id)] = chord_details["type"]
                         tc_h_key = make_pair_key("member_properties.cross_bracing_details.top_chord.leg_h", pair_id)
                         tc_w_key = make_pair_key("member_properties.cross_bracing_details.top_chord.leg_w", pair_id)
                         tc_t_key = make_pair_key("member_properties.cross_bracing_details.top_chord.thickness", pair_id)
