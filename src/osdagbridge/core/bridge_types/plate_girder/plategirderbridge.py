@@ -769,7 +769,7 @@ class PlateGirderBridge:
                 )
 
             # Stage 6: Deck Slab Design
-            self.deck_design_results = self._run_stage("6", self.design_deck_slab)
+            # self.deck_design_results = self._run_stage("6", self.design_deck_slab)
             
             # Stage 7: Transverse Member Design
             self.crossbracing_design_results = self._run_stage("7", self._stage_transverse_design)
