@@ -1,5 +1,5 @@
 """
-CrossBracingForces
+CrossBracingDesign
 ------------------
 Resolves grillage analysis forces into design axial forces for the
 diagonals and chords of intermediate cross bracing between adjacent
@@ -7,7 +7,7 @@ plate girders.
 
 Supported brace types
 ---------------------
-  X-type  Two full diagonals crossing the full width × height panel.
+  X-type  Two full diagonals crossing the full width Ã— height panel.
   K-type  Two diagonals from the TOP FLANGE of each girder converging
           at the CENTRE of the bottom chord (chevron / inverted-V).
           The top chord is optional.
@@ -31,15 +31,15 @@ Step-wise process
 
   Step 4  Resolve member forces.
 
-          Resolving Vz_i along the diagonal (angle α from horizontal):
+          Resolving Vz_i along the diagonal (angle Î± from horizontal):
 
-            F_diag  =  Vz_i / cos α
+            F_diag  =  Vz_i / cos Î±
 
           Chord force equals the full vertical shear:
 
             F_chord  =  Vz_i
 
-          Sign is preserved: positive → tension, negative → compression.
+          Sign is preserved: positive â†’ tension, negative â†’ compression.
 
   Step 5  Tabulate and envelope for design.
           Forces are assembled into a full DataFrame and enveloped
@@ -50,55 +50,55 @@ Geometry reference
 ------------------
 X-type  (elevation of the transverse plane between two girders)
 
-    G_i ──── top chord ──── G_(i+1)     y = h  (top flange level)
-     │                           │
+    G_i â”€â”€â”€â”€ top chord â”€â”€â”€â”€ G_(i+1)     y = h  (top flange level)
+     â”‚                           â”‚
       \\                         /
        \\          D2           /
         \\                     /
-    D1   ──────── X ────────       (diagonals cross at mid-panel)
+    D1   â”€â”€â”€â”€â”€â”€â”€â”€ X â”€â”€â”€â”€â”€â”€â”€â”€       (diagonals cross at mid-panel)
         /                     \\
        /          D3            \\
       /                         \\
-     │                           │
-    G_i ─── bottom chord ──── G_(i+1)   y = 0  (bottom flange level)
-         |<──────── s ─────────>|
+     â”‚                           â”‚
+    G_i â”€â”€â”€ bottom chord â”€â”€â”€â”€ G_(i+1)   y = 0  (bottom flange level)
+         |<â”€â”€â”€â”€â”€â”€â”€â”€ s â”€â”€â”€â”€â”€â”€â”€â”€â”€>|
 
     alpha_X = atan(h / s)
-    L_d_X   = sqrt(s² + h²)
+    L_d_X   = sqrt(sÂ² + hÂ²)
 
 K-type (inverted-V / chevron)
 
-    G_i ──── top chord ──── G_(i+1)     y = h  (optional top chord)
-     │                           │
+    G_i â”€â”€â”€â”€ top chord â”€â”€â”€â”€ G_(i+1)     y = h  (optional top chord)
+     â”‚                           â”‚
       \\                         /
        \\                       /
         \\                     /
          \\                   /          alpha_K = atan(h / (s/2))
-          \\                 /           L_d_K   = sqrt((s/2)² + h²)
-           ──── ─── *─── ────            centre node  (z = s/2)
-     │         s/2   s/2          │
-    G_i ─── bottom chord ──── G_(i+1)   y = 0
+          \\                 /           L_d_K   = sqrt((s/2)Â² + hÂ²)
+           â”€â”€â”€â”€ â”€â”€â”€ *â”€â”€â”€ â”€â”€â”€â”€            centre node  (z = s/2)
+     â”‚         s/2   s/2          â”‚
+    G_i â”€â”€â”€ bottom chord â”€â”€â”€â”€ G_(i+1)   y = 0
 
 Force resolution
 ----------------
 Vz of the transverse (cross-bracing) member is in the global axis,
-so it is read directly — no coordinate transformation needed.
+so it is read directly â€” no coordinate transformation needed.
 
 For a grillage element with no distributed load, Vz_i = -Vz_j.
 Both ends carry the same force magnitude; summing them would
 double-count the shear.  Vz_i (left girder end) is used.
 
-  Resolving along the diagonal (α from horizontal):
+  Resolving along the diagonal (Î± from horizontal):
 
-    F_diag  =  Vz_i / cos α     (kN)
+    F_diag  =  Vz_i / cos Î±     (kN)
 
   Chord force:
 
     F_chord =  Vz_i              (kN)
 
   where
-    Vz_i  (kN)  — Vz at the i-end of the cross-bracing member (left girder)
-    α     (rad) — atan(h / horiz_proj)
+    Vz_i  (kN)  â€” Vz at the i-end of the cross-bracing member (left girder)
+    Î±     (rad) â€” atan(h / horiz_proj)
     Sign preserved: positive = tension, negative = compression
 
 TODO
@@ -113,7 +113,7 @@ Usage
     pgb.set_input(input_dict)
     pgb.design()
 
-    cb = CrossBracingForces(bridge=pgb)
+    cb = CrossBracingDesign(bridge=pgb)
 
     df   = cb.compute_panel_forces()        # full table
     crit = cb.get_critical_forces()         # envelope per pair
@@ -153,7 +153,7 @@ BRACE_X = "X"
 BRACE_K = "K"
 
 # ===========================================================================
-class CrossBracingForces:
+class CrossBracingDesign:
     """
     Step-wise force analysis for X-type or K-type cross bracing.
 
@@ -168,14 +168,14 @@ class CrossBracingForces:
         [KEY_MP_CB_TYPE]; default 'X'.
     top_chord : bool or None
         True if a top chord connects the two girders at the top flange.
-        None → read from additional_inputs.  Default True.
+        None â†’ read from additional_inputs.  Default True.
     bottom_chord : bool or None
         True if a bottom chord connects the two girders at the bottom
-        flange.  None → read from additional_inputs.  Default True.
+        flange.  None â†’ read from additional_inputs.  Default True.
     cb_spacing : float or None
-        Cross-bracing panel spacing (m).  None → read from inputs.
+        Cross-bracing panel spacing (m).  None â†’ read from inputs.
     depth_ratio : float
-        Brace clear height = D × depth_ratio.  Default 0.85.
+        Brace clear height = D Ã— depth_ratio.  Default 0.85.
     include_edge_beams : bool
         Include EB1/EB2 edge beams in pair scanning.  Default False.
     """
@@ -198,7 +198,7 @@ class CrossBracingForces:
         self._init_geometry(cb_spacing)
 
     # =======================================================================
-    # STEP 1 — IDENTIFY BRACE CONFIGURATION
+    # STEP 1 â€” IDENTIFY BRACE CONFIGURATION
     # =======================================================================
 
     def _identify_configuration(
@@ -231,7 +231,7 @@ class CrossBracingForces:
             self.bottom_chord = str(val).strip().lower() not in ("no", "false", "0")
 
     # =======================================================================
-    # STEP 2 — BRACE GEOMETRY
+    # STEP 2 â€” BRACE GEOMETRY
     # =======================================================================
 
     def _init_geometry(self, cb_spacing: Optional[float]) -> None:
@@ -239,7 +239,7 @@ class CrossBracingForces:
 
         if geom is None:
             raise RuntimeError(
-                "CrossBracingForces requires bridge.design() to have been called first."
+                "CrossBracingDesign requires bridge.design() to have been called first."
             )
 
         if cb_spacing is not None:
@@ -273,7 +273,7 @@ class CrossBracingForces:
         self.cos_alpha = math.cos(self.alpha_rad)
 
     # =======================================================================
-    # STEP 3 — BUILD CHAIN MAP FROM crossbracings
+    # STEP 3 â€” BUILD CHAIN MAP FROM crossbracings
     # =======================================================================
 
     def _build_chain_map(self) -> list:
@@ -282,7 +282,7 @@ class CrossBracingForces:
 
         left_girder, right_girder, and connection coordinates are already
         stored on each chain by results_data_post_processing.build_crossbracings
-        — no re-derivation needed here.
+        â€” no re-derivation needed here.
 
         Returns
         -------
@@ -320,7 +320,7 @@ class CrossBracingForces:
         return chain_stations
 
     # =======================================================================
-    # STEP 3 (cont.) — READ Vz FROM TRANSVERSE MEMBER
+    # STEP 3 (cont.) â€” READ Vz FROM TRANSVERSE MEMBER
     # =======================================================================
 
     def _read_vz(self, lc: str, member_id: str, is_i: bool) -> Optional[float]:
@@ -339,15 +339,15 @@ class CrossBracingForces:
             return None
 
     # =======================================================================
-    # STEP 4 — RESOLVE MEMBER FORCES
+    # STEP 4 â€” RESOLVE MEMBER FORCES
     # =======================================================================
 
     def _resolve_forces(self, vz_kn: float) -> dict:
         """
         Resolve Vz_i (left-girder end shear, kN) into diagonal and chord forces.
 
-          F_diag  =  Vz_i / cos α   — axial force in diagonal
-          F_chord =  Vz_i            — axial force in chord
+          F_diag  =  Vz_i / cos Î±   â€” axial force in diagonal
+          F_chord =  Vz_i            â€” axial force in chord
 
         Sign preserved: positive = tension, negative = compression.
         """
@@ -360,7 +360,7 @@ class CrossBracingForces:
         }
 
     # =======================================================================
-    # STEP 5 — TABULATE AND ENVELOPE FOR DESIGN
+    # STEP 5 â€” TABULATE AND ENVELOPE FOR DESIGN
     # =======================================================================
 
     def compute_panel_forces(
@@ -412,9 +412,9 @@ class CrossBracingForces:
                 # Vz_i = -Vz_j must hold for a member with no distributed load
                 if abs(vz_l_kn + vz_r_kn) > _eq_tol:
                     warnings.warn(
-                        f"[CrossBracingForces] Equilibrium violated — "
+                        f"[CrossBracingDesign] Equilibrium violated â€” "
                         f"Member {st['first_member']} LC '{lc_str}': "
-                        f"Vz_i={vz_l_kn:.4f} kN, Vz_j={vz_r_kn:.4f} kN — "
+                        f"Vz_i={vz_l_kn:.4f} kN, Vz_j={vz_r_kn:.4f} kN â€” "
                         f"expected Vz_i = -Vz_j (diff={vz_l_kn + vz_r_kn:.4f} kN)",
                         stacklevel=2,
                     )
@@ -434,7 +434,7 @@ class CrossBracingForces:
 
     def get_critical_forces(self, forces_dict: Optional[dict] = None) -> pd.DataFrame:
         """
-        Critical diagonal and chord forces per girder pair — one T row and one C
+        Critical diagonal and chord forces per girder pair â€” one T row and one C
         row per pair (where those force types exist).
 
         Parameters
@@ -476,7 +476,7 @@ class CrossBracingForces:
 
     def get_design_forces_dict(self) -> dict:
         """
-        Design forces per girder pair — both tension and compression reported
+        Design forces per girder pair â€” both tension and compression reported
         separately because compression governs buckling independently of magnitude.
 
         Returns
@@ -509,7 +509,7 @@ class CrossBracingForces:
 
         diag_col  = "F_diag (kN)"
         chord_col = "F_chord (kN)"
-        # 0.005 kN = 5 N minimum — ensures round(..., 3) never produces 0.0
+        # 0.005 kN = 5 N minimum â€” ensures round(..., 3) never produces 0.0
         _tol = 5e-3
 
         pairs: dict = {}
@@ -566,7 +566,7 @@ class CrossBracingForces:
         """
         Run Osdag member designs for diagonals and chords.
 
-        Tension and compression are designed separately — a member that sees both
+        Tension and compression are designed separately â€” a member that sees both
         must satisfy both checks independently. Section selection is left to the user
         since sections cannot be compared programmatically.
 
@@ -592,12 +592,15 @@ class CrossBracingForces:
         if dev:
             out = Path(__file__).parents[5] / "tools" / "crossbracing_forces_dict.json"
             out.write_text(json.dumps(forces_dict, indent=2))
-            print(f"[CrossBracing] dev dump → {out}")
+            print(f"[CrossBracing] dev dump â†’ {out}")
 
         from osdagbridge.core.utils.connect import (
             design_dict_struts_bolted,
             design_dict_tension_bolted,
+            design_dict_struts_welded,
+            design_dict_tension_welded,
         )
+        from osdagbridge.core.utils.common import KEY_MP_CB_BRACING_CONNECTION
 
         if not forces_dict or not forces_dict.get("pairs"):
             return {}
@@ -611,18 +614,22 @@ class CrossBracingForces:
         jobs: list[tuple[str, str, str, dict]] = []
 
         for pair, vals in forces_dict["pairs"].items():
+            pair_id = pair.replace('-', '')
+            conn_type = self.bridge.input_dict.get(f"{KEY_MP_CB_BRACING_CONNECTION}.{pair_id}", "Bolted")
             for member, L_mm, t_key, c_key in (
                 ("diagonal", L_diag_mm, "diag_tension_kN",  "diag_compression_kN"),
                 ("chord",    L_chord_mm, "chord_tension_kN", "chord_compression_kN"),
             ):
                 if vals.get(t_key) is not None:
-                    d = copy.deepcopy(design_dict_tension_bolted)
+                    base_dict = design_dict_tension_welded if conn_type == "Welded" else design_dict_tension_bolted
+                    d = copy.deepcopy(base_dict)
                     d["Load.Axial"]    = str(float(vals[t_key]))
                     d["Member.Length"] = str(L_mm)
                     jobs.append((pair, member, "tension", d))
 
                 if vals.get(c_key) is not None:
-                    d = copy.deepcopy(design_dict_struts_bolted)
+                    base_dict = design_dict_struts_welded if conn_type == "Welded" else design_dict_struts_bolted
+                    d = copy.deepcopy(base_dict)
                     d["Load.Axial"]    = str(float(vals[c_key]))
                     d["Member.Length"] = str(L_mm)
                     jobs.append((pair, member, "compression", d))
@@ -690,10 +697,10 @@ class CrossBracingForces:
         self.print_configuration()
         df = self.get_critical_forces(forces_dict)
         print("\n" + "=" * 95)
-        print(" " * 22 + "CROSS BRACING — CRITICAL DESIGN FORCES")
+        print(" " * 22 + "CROSS BRACING â€” CRITICAL DESIGN FORCES")
         print("=" * 95)
         if df.empty:
-            print("  No critical forces — Vz not in dataset or no load cases found.")
+            print("  No critical forces â€” Vz not in dataset or no load cases found.")
         else:
             print(df.to_string(index=False))
         print("=" * 95)
