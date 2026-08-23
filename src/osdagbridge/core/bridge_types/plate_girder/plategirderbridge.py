@@ -2308,6 +2308,10 @@ class PlateGirderBridge:
         # below is redundant — but kept for the _frontend.set_output_value calls.
         # self.store_design_results(design_results)
 
+    def _query_crossbracing_section(self, section_name: str) -> dict:
+        # Stub to prevent crash - properties are already handled by design modules
+        return {}
+
     def _design_cross_bracing_members(self) -> dict:
         """
         Run Osdag member designs for cross-bracing diagonals and chords.
